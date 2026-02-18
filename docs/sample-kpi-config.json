@@ -1,0 +1,104 @@
+{
+  "tenant": "acme-logistics",
+  "dashboard": {
+    "timeWindow": "quarter",
+    "refreshCadence": "daily"
+  },
+  "programKpis": [
+    {
+      "key": "stability_improvement_index",
+      "name": "Employee-Reported Stability Improvement",
+      "formula": "avg(current_stability_score - baseline_stability_score)",
+      "target": 10,
+      "format": "number"
+    },
+    {
+      "key": "resource_conversion_rate",
+      "name": "Resource Conversion Rate",
+      "formula": "employees_accessing_resource / eligible_employees",
+      "target": 0.65,
+      "format": "percent"
+    },
+    {
+      "key": "support_area_utilization",
+      "name": "Support Area Utilization",
+      "formula": "participants_in_support_area / total_enrolled",
+      "target": 0.5,
+      "format": "percent"
+    },
+    {
+      "key": "partner_fidelity_rate",
+      "name": "Partner Fidelity Rate",
+      "formula": "partners_meeting_agreement_terms / total_active_partners",
+      "target": 0.9,
+      "format": "percent"
+    },
+    {
+      "key": "program_awareness_rate",
+      "name": "Program Awareness Rate",
+      "formula": "employees_aware_of_program / surveyed_employees",
+      "target": 0.8,
+      "format": "percent"
+    }
+  ],
+  "coordinatorKpis": [
+    {
+      "key": "referral_response_rate",
+      "name": "Referral Response Rate",
+      "formula": "responded_referrals / assigned_referrals",
+      "target": 0.95,
+      "format": "percent"
+    },
+    {
+      "key": "employee_engagement_count",
+      "name": "Employee Engagement Count",
+      "formula": "count(case_interactions)",
+      "target": 40,
+      "format": "number"
+    },
+    {
+      "key": "resource_presentation_count",
+      "name": "Resource Presentation Count",
+      "formula": "count(resource_presentations)",
+      "target": 2,
+      "format": "number"
+    },
+    {
+      "key": "time_allocation_ratio",
+      "name": "Direct Service Time Allocation",
+      "formula": "direct_service_hours / total_program_hours",
+      "target": 0.7,
+      "format": "percent"
+    },
+    {
+      "key": "progress_note_submission_rate",
+      "name": "Progress Note Submission Rate",
+      "formula": "submitted_notes / required_notes",
+      "target": 0.98,
+      "format": "percent"
+    }
+  ],
+  "cohorts": [
+    "location",
+    "job_family",
+    "tenure_bucket",
+    "program_track"
+  ],
+  "alerts": [
+    {
+      "name": "Referral Response Delay",
+      "condition": "referral_response_rate < 0.85",
+      "severity": "high"
+    },
+    {
+      "name": "Partner Fidelity Drop",
+      "condition": "partner_fidelity_rate < 0.8",
+      "severity": "high"
+    },
+    {
+      "name": "Documentation Compliance Risk",
+      "condition": "progress_note_submission_rate < 0.9",
+      "severity": "medium"
+    }
+  ]
+}
