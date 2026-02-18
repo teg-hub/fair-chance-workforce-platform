@@ -1,4 +1,4 @@
-# Fair Chance Workforce Enablement Platform Blueprint
+# Fair Chance Workforce Platform Blueprint
 
 ## 1) Product Scope
 A configurable, AI-assisted platform that allows organizations to run fair chance employment support programs at scale.
