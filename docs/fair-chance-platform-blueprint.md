@@ -31,7 +31,7 @@ A configurable, AI-assisted platform that allows organizations to run fair chanc
 
 ### AI in Workflow
 - Smart form assist: simplify and clarify questions in plain language.
-- Referral summarization for case worker handoff.
+- Referral summarization for coordinator handoff.
 - Priority scoring recommendation with transparent rationale.
 - Duplicate candidate suggestions based on fuzzy name/contact matching.
 

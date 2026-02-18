@@ -19,9 +19,10 @@ The system is designed for multi-tenant deployment so each company can tailor wo
 - `docs/sample-kpi-config.json` – example tenant-specific KPI configuration
 - `docs/ai-workflows.md` – AI workflow patterns, guardrails, and prompt templates
 - `docs/option-a-parameter-ingestion.md` – translated requirements from your uploaded scope document (Glide-style -> Vercel-ready)
+- `docs/canonical-requirements-pack.md` – normalized nomenclature, enums, and workflow anchors
 
 ## Suggested MVP Build Stack (Vercel-Oriented)
-- **Frontend:** Next.js + TypeScript + Tailwind (employee portal + case worker console + admin analytics)
+- **Frontend:** Next.js + TypeScript + Tailwind (employee portal + coordinator console + admin analytics)
 - **Backend:** Next.js Route Handlers / Server Actions or separate Python/FastAPI service for heavy workflows
 - **Database:** PostgreSQL (e.g., Neon/Supabase/Postgres-compatible)
 - **Auth & Access:** SSO/OIDC + role-based access control
@@ -30,7 +31,7 @@ The system is designed for multi-tenant deployment so each company can tailor wo
 
 ## Core User Roles
 - Employee (self-referral and progress tracking)
-- Coordinator / Case Worker
+- Coordinator
 - Program Manager
 - Company Admin
 - Platform Super Admin (optional)

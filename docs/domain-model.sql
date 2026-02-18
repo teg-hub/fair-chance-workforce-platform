@@ -1,6 +1,5 @@
--- Starter domain model for Fair Chance Workforce Enablement Platform (PostgreSQL)
--- Updated to include uploaded scope parameters (multi-entry referrals, structured progress notes,
--- partner fidelity, assessments, feedback, and communication campaigns).
+-- Canonical starter domain model for Fair Chance Workforce Enablement Platform (PostgreSQL)
+-- Aligns to referral + direct engagement, case-centric workflows, and caseload-scoped operations.
 
 CREATE TABLE tenants (
   id UUID PRIMARY KEY,
@@ -23,23 +22,28 @@ CREATE TABLE users (
   UNIQUE (tenant_id, email)
 );
 
-CREATE TABLE employee_profiles (
+CREATE TABLE employees (
   id UUID PRIMARY KEY,
   tenant_id UUID NOT NULL REFERENCES tenants(id),
-  employee_user_id UUID NOT NULL REFERENCES users(id),
-  employee_external_id TEXT,
-  archived_at TIMESTAMPTZ,
-  archived_by_user_id UUID REFERENCES users(id),
+  employee_user_id UUID REFERENCES users(id),
+  external_hris_id TEXT,
+  first_name TEXT NOT NULL,
+  last_name TEXT NOT NULL,
+  email TEXT,
+  phone TEXT,
+  preferred_language TEXT NOT NULL DEFAULT 'en',
+  status TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'leave', 'terminated')),
+  merged_into_employee_id UUID REFERENCES employees(id),
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  UNIQUE (tenant_id, employee_user_id)
+  UNIQUE (tenant_id, external_hris_id)
 );
 
 CREATE TABLE employee_merge_events (
   id UUID PRIMARY KEY,
   tenant_id UUID NOT NULL REFERENCES tenants(id),
-  surviving_employee_profile_id UUID NOT NULL REFERENCES employee_profiles(id),
-  merged_employee_profile_id UUID NOT NULL REFERENCES employee_profiles(id),
+  surviving_employee_id UUID NOT NULL REFERENCES employees(id),
+  merged_employee_id UUID NOT NULL REFERENCES employees(id),
   merged_by_user_id UUID NOT NULL REFERENCES users(id),
   merge_reason TEXT,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
@@ -48,11 +52,13 @@ CREATE TABLE employee_merge_events (
 CREATE TABLE referrals (
   id UUID PRIMARY KEY,
   tenant_id UUID NOT NULL REFERENCES tenants(id),
-  employee_profile_id UUID REFERENCES employee_profiles(id),
-  source_type TEXT NOT NULL CHECK (source_type IN ('employee_self_entry', 'coordinator_entry', 'manager_entry')),
+  intake_path TEXT NOT NULL CHECK (intake_path IN ('referral', 'direct_engagement')),
+  source_type TEXT NOT NULL CHECK (source_type IN ('employee_self', 'manager', 'coordinator', 'hr', 'anonymous_other')),
+  employee_id UUID REFERENCES employees(id),
   submitted_by_user_id UUID REFERENCES users(id),
-  referral_status TEXT NOT NULL CHECK (referral_status IN ('submitted', 'triaged', 'assigned', 'closed', 'archived')),
-  urgency_level TEXT CHECK (urgency_level IN ('low', 'medium', 'high', 'critical')),
+  referral_status TEXT NOT NULL CHECK (referral_status IN ('submitted', 'triaged', 'assigned', 'contacted', 'in_progress', 'converted_to_case', 'closed', 'cancelled', 'archived')),
+  risk_level TEXT NOT NULL CHECK (risk_level IN ('low', 'medium', 'high', 'critical')),
+  support_category_codes TEXT[] NOT NULL DEFAULT '{}',
   preferred_contact_channel TEXT,
   booking_provider TEXT,
   booking_reference TEXT,
@@ -63,63 +69,49 @@ CREATE TABLE referrals (
   assigned_coordinator_id UUID REFERENCES users(id)
 );
 
-CREATE TABLE referral_support_categories (
+CREATE TABLE cases (
   id UUID PRIMARY KEY,
   tenant_id UUID NOT NULL REFERENCES tenants(id),
-  key TEXT NOT NULL,
-  label TEXT NOT NULL,
-  is_active BOOLEAN NOT NULL DEFAULT TRUE,
-  UNIQUE (tenant_id, key)
-);
-
-CREATE TABLE referral_category_assignments (
-  referral_id UUID NOT NULL REFERENCES referrals(id),
-  category_id UUID NOT NULL REFERENCES referral_support_categories(id),
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  PRIMARY KEY (referral_id, category_id)
+  employee_id UUID NOT NULL REFERENCES employees(id),
+  referral_id UUID REFERENCES referrals(id),
+  assigned_coordinator_id UUID NOT NULL REFERENCES users(id),
+  case_status TEXT NOT NULL DEFAULT 'open' CHECK (case_status IN ('open', 'active_support', 'paused', 'closed')),
+  opened_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  closed_at TIMESTAMPTZ
 );
 
 CREATE TABLE development_plans (
   id UUID PRIMARY KEY,
   tenant_id UUID NOT NULL REFERENCES tenants(id),
-  referral_id UUID REFERENCES referrals(id),
-  employee_profile_id UUID NOT NULL REFERENCES employee_profiles(id),
+  case_id UUID NOT NULL REFERENCES cases(id),
+  employee_id UUID NOT NULL REFERENCES employees(id),
   owner_coordinator_id UUID NOT NULL REFERENCES users(id),
-  status TEXT NOT NULL CHECK (status IN ('draft', 'in_review', 'active', 'completed', 'archived')),
+  status TEXT NOT NULL CHECK (status IN ('draft', 'active', 'paused', 'completed', 'archived')),
   version INTEGER NOT NULL DEFAULT 1,
-  plan_summary TEXT,
+  title TEXT,
+  start_date DATE,
+  target_end_date DATE,
+  goals_json JSONB NOT NULL DEFAULT '[]',
   ai_generated BOOLEAN NOT NULL DEFAULT FALSE,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
-CREATE TABLE plan_goals (
-  id UUID PRIMARY KEY,
-  tenant_id UUID NOT NULL REFERENCES tenants(id),
-  development_plan_id UUID NOT NULL REFERENCES development_plans(id),
-  category_id UUID REFERENCES referral_support_categories(id),
-  title TEXT NOT NULL,
-  description TEXT,
-  target_date DATE,
-  status TEXT NOT NULL CHECK (status IN ('not_started', 'in_progress', 'blocked', 'completed')),
-  success_metric TEXT,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
-);
-
 CREATE TABLE progress_notes (
   id UUID PRIMARY KEY,
   tenant_id UUID NOT NULL REFERENCES tenants(id),
-  employee_profile_id UUID NOT NULL REFERENCES employee_profiles(id),
-  referral_id UUID REFERENCES referrals(id),
-  development_plan_id UUID REFERENCES development_plans(id),
+  employee_id UUID NOT NULL REFERENCES employees(id),
+  case_id UUID NOT NULL REFERENCES cases(id),
   coordinator_id UUID NOT NULL REFERENCES users(id),
+  note_type TEXT NOT NULL CHECK (note_type IN ('intake', 'coaching_session', 'resource_referral', 'crisis', 'follow_up')),
   note_start_date DATE NOT NULL,
   interaction_at TIMESTAMPTZ NOT NULL,
-  engagement_type TEXT NOT NULL CHECK (engagement_type IN ('meeting', 'call', 'sms', 'email', 'checkin', 'resource_referral', 'presentation')),
-  goals_addressed TEXT,
-  direct_service_efforts TEXT,
-  external_partnership_connections TEXT,
-  narrative_note TEXT,
+  location_type TEXT CHECK (location_type IN ('in_person', 'virtual', 'phone', 'text')),
+  structured_json JSONB NOT NULL DEFAULT '{}',
+  summary_text TEXT,
+  status TEXT NOT NULL CHECK (status IN ('draft', 'final', 'amended')),
+  version INTEGER NOT NULL DEFAULT 1,
+  prior_note_id UUID REFERENCES progress_notes(id),
   ai_summary TEXT,
   action_items JSONB,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
@@ -129,7 +121,7 @@ CREATE TABLE external_partners (
   id UUID PRIMARY KEY,
   tenant_id UUID NOT NULL REFERENCES tenants(id),
   name TEXT NOT NULL,
-  service_categories JSONB,
+  support_category_codes TEXT[] NOT NULL DEFAULT '{}',
   mou_reference TEXT,
   active BOOLEAN NOT NULL DEFAULT TRUE,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
@@ -139,8 +131,9 @@ CREATE TABLE partner_fidelity_assessments (
   id UUID PRIMARY KEY,
   tenant_id UUID NOT NULL REFERENCES tenants(id),
   partner_id UUID NOT NULL REFERENCES external_partners(id),
-  assessment_date DATE NOT NULL,
-  fidelity_score NUMERIC(5,2) NOT NULL,
+  period_start DATE NOT NULL,
+  period_end DATE NOT NULL,
+  score_total INTEGER NOT NULL CHECK (score_total BETWEEN 0 AND 100),
   notes TEXT,
   created_by_user_id UUID REFERENCES users(id),
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
@@ -149,21 +142,20 @@ CREATE TABLE partner_fidelity_assessments (
 CREATE TABLE employee_feedback_surveys (
   id UUID PRIMARY KEY,
   tenant_id UUID NOT NULL REFERENCES tenants(id),
-  employee_profile_id UUID NOT NULL REFERENCES employee_profiles(id),
-  submitted_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  survey_type TEXT NOT NULL,
-  score_payload JSONB NOT NULL,
-  comments TEXT
+  employee_id UUID NOT NULL REFERENCES employees(id),
+  survey_version TEXT NOT NULL,
+  response_payload JSONB NOT NULL,
+  submitted_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
 CREATE TABLE needs_assessments (
   id UUID PRIMARY KEY,
   tenant_id UUID NOT NULL REFERENCES tenants(id),
-  employee_profile_id UUID NOT NULL REFERENCES employee_profiles(id),
+  employee_id UUID NOT NULL REFERENCES employees(id),
   conducted_by_user_id UUID NOT NULL REFERENCES users(id),
   assessment_date DATE NOT NULL,
+  support_category_codes TEXT[] NOT NULL DEFAULT '{}',
   assessment_payload JSONB NOT NULL,
-  priority_recommendations JSONB,
   ai_summary TEXT,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
@@ -172,7 +164,7 @@ CREATE TABLE resource_presentations (
   id UUID PRIMARY KEY,
   tenant_id UUID NOT NULL REFERENCES tenants(id),
   title TEXT NOT NULL,
-  occurred_at TIMESTAMPTZ NOT NULL,
+  scheduled_at TIMESTAMPTZ NOT NULL,
   presenter_user_id UUID REFERENCES users(id),
   partner_id UUID REFERENCES external_partners(id),
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
@@ -180,30 +172,50 @@ CREATE TABLE resource_presentations (
 
 CREATE TABLE resource_presentation_attendance (
   resource_presentation_id UUID NOT NULL REFERENCES resource_presentations(id),
-  employee_profile_id UUID NOT NULL REFERENCES employee_profiles(id),
-  attended BOOLEAN NOT NULL DEFAULT TRUE,
+  employee_id UUID NOT NULL REFERENCES employees(id),
+  status TEXT NOT NULL CHECK (status IN ('registered', 'attended', 'no_show', 'cancelled')),
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  PRIMARY KEY (resource_presentation_id, employee_profile_id)
+  PRIMARY KEY (resource_presentation_id, employee_id)
 );
 
-CREATE TABLE generated_communications (
+CREATE TABLE consents (
+  id UUID PRIMARY KEY,
+  tenant_id UUID NOT NULL REFERENCES tenants(id),
+  employee_id UUID NOT NULL REFERENCES employees(id),
+  channel TEXT NOT NULL CHECK (channel IN ('email', 'sms', 'in_app')),
+  status TEXT NOT NULL CHECK (status IN ('opt_in', 'opt_out')),
+  captured_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE TABLE campaigns (
   id UUID PRIMARY KEY,
   tenant_id UUID NOT NULL REFERENCES tenants(id),
   created_by_user_id UUID NOT NULL REFERENCES users(id),
-  channel TEXT NOT NULL CHECK (channel IN ('email', 'sms')),
-  campaign_name TEXT,
-  message_body TEXT NOT NULL,
-  audience_filter JSONB,
-  status TEXT NOT NULL CHECK (status IN ('draft', 'scheduled', 'sent', 'cancelled')),
+  channel TEXT NOT NULL CHECK (channel IN ('email', 'sms', 'in_app')),
+  audience_filter JSONB NOT NULL,
+  message_template_id UUID,
+  message_body TEXT,
+  status TEXT NOT NULL CHECK (status IN ('draft', 'scheduled', 'sending', 'paused', 'sent', 'cancelled')),
   scheduled_for TIMESTAMPTZ,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE TABLE message_deliveries (
+  id UUID PRIMARY KEY,
+  tenant_id UUID NOT NULL REFERENCES tenants(id),
+  campaign_id UUID NOT NULL REFERENCES campaigns(id),
+  employee_id UUID NOT NULL REFERENCES employees(id),
+  status TEXT NOT NULL CHECK (status IN ('queued', 'sent', 'delivered', 'failed', 'suppressed')),
+  provider_message_id TEXT,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
 CREATE TABLE uploaded_documents (
   id UUID PRIMARY KEY,
   tenant_id UUID NOT NULL REFERENCES tenants(id),
-  employee_profile_id UUID REFERENCES employee_profiles(id),
+  employee_id UUID REFERENCES employees(id),
   referral_id UUID REFERENCES referrals(id),
+  case_id UUID REFERENCES cases(id),
   development_plan_id UUID REFERENCES development_plans(id),
   progress_note_id UUID REFERENCES progress_notes(id),
   storage_uri TEXT NOT NULL,
@@ -241,6 +253,9 @@ CREATE TABLE kpi_measurements (
 CREATE TABLE tenant_configs (
   tenant_id UUID PRIMARY KEY REFERENCES tenants(id),
   config_version INTEGER NOT NULL DEFAULT 1,
+  timezone TEXT NOT NULL DEFAULT 'America/New_York',
+  quiet_hours_start TIME NOT NULL DEFAULT '21:00',
+  quiet_hours_end TIME NOT NULL DEFAULT '08:00',
   intake_form_schema JSONB NOT NULL,
   workflow_rules JSONB NOT NULL,
   notification_templates JSONB NOT NULL,
@@ -249,10 +264,22 @@ CREATE TABLE tenant_configs (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
+CREATE TABLE audit_events (
+  id UUID PRIMARY KEY,
+  tenant_id UUID NOT NULL REFERENCES tenants(id),
+  actor_user_id UUID REFERENCES users(id),
+  event_name TEXT NOT NULL,
+  entity_type TEXT NOT NULL,
+  entity_id UUID NOT NULL,
+  event_payload JSONB NOT NULL DEFAULT '{}',
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
 CREATE INDEX idx_referrals_tenant_status ON referrals(tenant_id, referral_status);
-CREATE INDEX idx_referrals_tenant_assignee ON referrals(tenant_id, assigned_coordinator_id);
-CREATE INDEX idx_progress_notes_tenant_employee ON progress_notes(tenant_id, employee_profile_id);
-CREATE INDEX idx_development_plans_tenant_status ON development_plans(tenant_id, status);
-CREATE INDEX idx_partner_fidelity_tenant_partner_date ON partner_fidelity_assessments(tenant_id, partner_id, assessment_date);
-CREATE INDEX idx_feedback_tenant_date ON employee_feedback_surveys(tenant_id, submitted_at);
+CREATE INDEX idx_referrals_assignee ON referrals(tenant_id, assigned_coordinator_id);
+CREATE INDEX idx_cases_assignee_status ON cases(tenant_id, assigned_coordinator_id, case_status);
+CREATE INDEX idx_progress_notes_case ON progress_notes(tenant_id, case_id, created_at);
+CREATE INDEX idx_partner_fidelity_period ON partner_fidelity_assessments(tenant_id, partner_id, period_start, period_end);
+CREATE INDEX idx_feedback_submitted_at ON employee_feedback_surveys(tenant_id, submitted_at);
 CREATE INDEX idx_kpi_measurements_period ON kpi_measurements(tenant_id, period_start, period_end);
+CREATE INDEX idx_audit_entity ON audit_events(tenant_id, entity_type, entity_id, created_at);

@@ -52,7 +52,7 @@
     {
       "key": "employee_engagement_count",
       "name": "Employee Engagement Count",
-      "formula": "count(case_interactions)",
+      "formula": "count(progress_notes)",
       "target": 40,
       "format": "number"
     },
