@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fair Chance Workforce Enablement Platform</title>
+    <style>
+      body { font-family: Arial, sans-serif; margin: 40px; line-height: 1.5; color: #1f2937; }
+      .card { max-width: 860px; border: 1px solid #e5e7eb; border-radius: 10px; padding: 24px; }
+      code { background: #f3f4f6; padding: 2px 6px; border-radius: 6px; }
+      a { color: #2563eb; text-decoration: none; }
+      a:hover { text-decoration: underline; }
+      ul { padding-left: 18px; }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h1>Fair Chance Workforce Enablement Platform</h1>
+      <p>This deployment is live. If you previously saw a 404 on the root URL, this page is now the default landing page.</p>
+
+      <h2>What this repo currently provides</h2>
+      <ul>
+        <li>Product blueprint and architecture docs</li>
+        <li>Runnable pilot vertical-slice API for local/staging use</li>
+        <li>KPI model and execution planning artifacts</li>
+      </ul>
+
+      <h2>Important note on Vercel runtime</h2>
+      <p>
+        The current API implementation is a long-running Python server (<code>python3 -m app.main</code>) intended
+        for local/staging usage. Vercel is serverless, so this repo deployment currently publishes this landing page
+        plus static documentation files.
+      </p>
+
+      <h2>Quick links</h2>
+      <ul>
+        <li><a href="/README.md">README.md</a></li>
+        <li><a href="/docs/platform-build-synopsis.md">Build Synopsis</a></li>
+        <li><a href="/docs/fair-chance-platform-blueprint.md">Platform Blueprint</a></li>
+      </ul>
+    </div>
+  </body>
+</html>

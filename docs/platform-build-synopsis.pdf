@@ -1,0 +1,203 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Count 2 /Kids [ 5 0 R 7 0 R ] >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+4 0 obj
+<< /Length 2474 >>
+stream
+BT
+/F1 11 Tf
+1 0 0 1 54 738 Tm
+(Fair Chance Workforce Enablement Platform ? Build Synopsis \(Current State\)) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(1\) High-Level Build Summary) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(The repository currently provides an implementation-ready product blueprint for a multi-tenant) Tj
+0 -14 Td
+(Fair Chance Workforce Enablement Platform with AI-assisted workflows.) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(It includes:) Tj
+0 -14 Td
+(? A complete product blueprint and module definitions.) Tj
+0 -14 Td
+(? A case-centric PostgreSQL starter schema.) Tj
+0 -14 Td
+(? A draft MVP API endpoint contract.) Tj
+0 -14 Td
+(? AI workflow patterns with human-review guardrails.) Tj
+0 -14 Td
+(? KPI definitions and tenant-level KPI configuration.) Tj
+0 -14 Td
+(? A sprint-by-sprint MVP execution plan.) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(At this stage, the build is a strong architecture/specification package ready for engineering) Tj
+0 -14 Td
+(implementation, rather than a deployed production application.) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(2\) Tenant-Side Experience) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(A tenant \(company\) experience is designed as follows:) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(1. Configure program settings) Tj
+0 -14 Td
+(   - Timezone, quiet hours, templates, workflow rules, survey instruments, and KPI definitions) Tj
+0 -14 Td
+(are tenant-scoped.) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(2. Role-based operations) Tj
+0 -14 Td
+(   - Employee, Coordinator, Manager, Program Manager, and Company Admin roles are supported.) Tj
+0 -14 Td
+(   - Caseload-based access controls are part of the design.) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(3. Run intake and engagement workflows) Tj
+0 -14 Td
+(   - Supports both Referral and Direct Engagement intake paths.) Tj
+0 -14 Td
+(   - Triage, assignment, and case conversion workflows are defined.) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(4. Manage cases and development plans) Tj
+0 -14 Td
+(   - Case lifecycle, development plan versioning, structured progress notes, and document) Tj
+0 -14 Td
+(metadata are modeled.) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(5. Track communications and consent) Tj
+0 -14 Td
+(   - Consent records, campaigns \(email/SMS/in-app\), quiet-hours, and delivery tracking are) Tj
+0 -14 Td
+(included.) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(6. Measure impact and operations) Tj
+0 -14 Td
+(   - Program-level and coordinator-level KPI scorecards, cohort slicing, and threshold alerts) Tj
+0 -14 Td
+(are specified.) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(3\) Current Functional Coverage) Tj
+0 -14 Td
+() Tj
+ET
+endstream
+endobj
+5 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 4 0 R >>
+endobj
+6 0 obj
+<< /Length 1755 >>
+stream
+BT
+/F1 11 Tf
+1 0 0 1 54 738 Tm
+(What it is able to do today \(in-repo\)) Tj
+0 -14 Td
+(? Provide a complete and coherent specification baseline for product, design, and engineering) Tj
+0 -14 Td
+(teams.) Tj
+0 -14 Td
+(? Define database entities and relationships for core modules.) Tj
+0 -14 Td
+(? Define API surfaces and workflow/state expectations.) Tj
+0 -14 Td
+(? Define KPI formulas, cohorts, and alerts.) Tj
+0 -14 Td
+(? Define responsible AI boundaries and approval checkpoints.) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(What is not yet implemented as runtime software) Tj
+0 -14 Td
+(? No live web app or API server is shipped in this repo yet.) Tj
+0 -14 Td
+(? No production telemetry exists yet for real performance benchmarks.) Tj
+0 -14 Td
+(? No tenant-facing hosted environment has been configured from this repository alone.) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(4\) Performance Status) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Current performance posture is design-defined rather than empirically measured:) Tj
+0 -14 Td
+(? KPI refresh cadence and alerting behavior are specified in configuration.) Tj
+0 -14 Td
+(? Access control, auditability, and workflow controls are defined.) Tj
+0 -14 Td
+(? Operational and user performance metrics will be measurable once a runnable implementation is) Tj
+0 -14 Td
+(deployed and instrumented.) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(5\) Suggested Immediate Next Build Step) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Build the first vertical slice in code:) Tj
+0 -14 Td
+(1. Auth + tenant scoping) Tj
+0 -14 Td
+(2. Referral/direct-engagement intake) Tj
+0 -14 Td
+(3. Case creation + progress note save/finalize) Tj
+0 -14 Td
+(4. One coordinator KPI endpoint) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(That sequence will allow early pilot validation and measurable performance baselines.) Tj
+ET
+endstream
+endobj
+7 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 6 0 R >>
+endobj
+xref
+0 8
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000123 00000 n 
+0000000193 00000 n 
+0000002719 00000 n 
+0000002845 00000 n 
+0000004652 00000 n 
+trailer
+<< /Size 8 /Root 1 0 R >>
+startxref
+4778
+%%EOF
