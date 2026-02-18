@@ -1,0 +1,62 @@
+{
+  "tenant": "acme-logistics",
+  "dashboard": {
+    "timeWindow": "quarter",
+    "refreshCadence": "daily"
+  },
+  "kpis": [
+    {
+      "key": "intake_completion_rate",
+      "name": "Intake Completion Rate",
+      "formula": "completed_referrals / submitted_referrals",
+      "target": 0.85,
+      "format": "percent"
+    },
+    {
+      "key": "time_to_case_assignment_hours",
+      "name": "Time to Case Assignment (Hours)",
+      "formula": "avg(assignment_timestamp - submission_timestamp)",
+      "target": 24,
+      "format": "number"
+    },
+    {
+      "key": "plan_activation_rate",
+      "name": "Development Plan Activation Rate",
+      "formula": "active_plans / assigned_cases",
+      "target": 0.8,
+      "format": "percent"
+    },
+    {
+      "key": "90_day_retention",
+      "name": "90-Day Retention",
+      "formula": "employees_retained_90d / enrolled_employees",
+      "target": 0.75,
+      "format": "percent"
+    },
+    {
+      "key": "goal_completion_rate",
+      "name": "Goal Completion Rate",
+      "formula": "completed_goals / total_goals",
+      "target": 0.65,
+      "format": "percent"
+    }
+  ],
+  "cohorts": [
+    "location",
+    "job_family",
+    "tenure_bucket",
+    "program_track"
+  ],
+  "alerts": [
+    {
+      "name": "Assignment SLA Breach",
+      "condition": "time_to_case_assignment_hours > 24",
+      "severity": "high"
+    },
+    {
+      "name": "Engagement Drop",
+      "condition": "weekly_session_attendance_rate < 0.6",
+      "severity": "medium"
+    }
+  ]
+}
