@@ -1,4 +1,4 @@
-# Fair Chance Workforce Enablement Platform
+# Fair Chance Workforce Platform
 
 An AI-enabled product blueprint for organizations running fair chance employment programs.
 
