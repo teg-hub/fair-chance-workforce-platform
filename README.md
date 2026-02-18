@@ -18,20 +18,18 @@ The system is designed for multi-tenant deployment so each company can tailor wo
 - `docs/domain-model.sql` – starter relational data model for a production MVP
 - `docs/sample-kpi-config.json` – example tenant-specific KPI configuration
 - `docs/ai-workflows.md` – AI workflow patterns, guardrails, and prompt templates
-- `docs/option-a-parameter-ingestion.md` – translated requirements from your uploaded scope document (Glide-style -> Vercel-ready)
-- `docs/canonical-requirements-pack.md` – normalized nomenclature, enums, and workflow anchors
 
-## Suggested MVP Build Stack (Vercel-Oriented)
-- **Frontend:** Next.js + TypeScript + Tailwind (employee portal + coordinator console + admin analytics)
-- **Backend:** Next.js Route Handlers / Server Actions or separate Python/FastAPI service for heavy workflows
-- **Database:** PostgreSQL (e.g., Neon/Supabase/Postgres-compatible)
+## Suggested MVP Build Stack
+- **Frontend:** React + TypeScript (employee portal + case worker console + admin analytics)
+- **Backend:** Node.js/TypeScript or Python/FastAPI
+- **Database:** PostgreSQL
 - **Auth & Access:** SSO/OIDC + role-based access control
 - **AI Layer:** LLM service with retrieval, workflow prompts, and human review checkpoints
-- **Infrastructure:** Vercel + managed services with audit logs and encryption
+- **Infrastructure:** Multi-tenant cloud deployment with audit logs and encryption
 
 ## Core User Roles
 - Employee (self-referral and progress tracking)
-- Coordinator
+- Social Service Worker / Case Manager
 - Program Manager
 - Company Admin
 - Platform Super Admin (optional)
