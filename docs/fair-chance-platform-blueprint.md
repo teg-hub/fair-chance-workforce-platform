@@ -8,40 +8,31 @@ A configurable, AI-assisted platform that allows organizations to run fair chanc
 - Improve quality and consistency of individualized development plans.
 - Streamline case documentation while preserving compliance and auditability.
 - Measure impact with tenant-specific KPIs and dashboards.
-- Support both **referral-based** and **direct-engagement** workflows.
 
 ---
 
 ## 2) Core Modules
 
-## A. Employee Intake & Referral System
+## A. Employee Intake & Self-Referral System
 
 ### Functional Requirements
-- Multi-entry referral creation:
-  - Employee self-entry
-  - Coordinator entry
-  - Manager entry
-- Mobile-first intake form (multilingual + accessibility support).
+- Mobile-first self-referral form (multilingual + accessibility support).
+- Optional anonymous pre-screen mode.
 - Consent workflow (data sharing, communication preferences, policy acknowledgments).
 - Risk/urgency triage questionnaire.
-- Multi-select need categories (food, clothing, housing, legal, mental health/wellness, transportation).
-- External booking integration (Microsoft Bookings first).
-- Duplicate detection + manual merge for employee identity cleanup.
-- Referral archive workflow for completed/aged referrals.
+- AI-assisted classification of support categories (e.g., housing, transportation, legal aid, childcare, financial coaching).
 
 ### AI in Workflow
 - Smart form assist: simplify and clarify questions in plain language.
-- Referral summarization for coordinator handoff.
+- Referral summarization for case worker handoff.
 - Priority scoring recommendation with transparent rationale.
-- Duplicate candidate suggestions based on fuzzy name/contact matching.
 
 ### Key Data Captured
-- First and last names separately (plus display name if needed).
+- Demographics (configurable, minimal data principles).
 - Employment status and role details.
 - Barriers to stability/advancement.
 - Preferred communication channel.
 - Consent records and timestamps.
-- Referral source type and submitting user.
 
 ---
 
@@ -50,9 +41,8 @@ A configurable, AI-assisted platform that allows organizations to run fair chanc
 ### Functional Requirements
 - Plan templates by barrier type and company policy.
 - SMART goals with milestones and due dates.
-- Goals mapped to referral support categories.
 - Resource linking (internal and community services).
-- Approval workflow (employee + coordinator sign-off).
+- Approval workflow (employee + case manager sign-off).
 - Plan revision history and version comparison.
 
 ### AI in Workflow
@@ -71,15 +61,11 @@ A configurable, AI-assisted platform that allows organizations to run fair chanc
 ## C. Case Management + Documentation
 
 ### Functional Requirements
-- Caseload-scoped timeline (meetings, notes, referrals, tasks, outcomes).
-- Structured progress notes with traditional case-note fields.
-- Progress note **start date** and interaction date/time.
-- Meeting Location + Next Meeting Location dropdown options: Office, Garage, Newberry, Community, Phone, Video, Text, Email.
-- Required note fields: meeting location, areas of need (multi-select), employee report, coordinator observations, short/long-term goals, follow-up actions, and meeting summary.
+- Case timeline (meetings, notes, referrals, tasks, outcomes).
+- Structured + unstructured note capture.
 - Follow-up reminders and escalation rules.
 - Document uploads with metadata and retention policy tags.
 - Internal collaboration notes (role-restricted).
-- Archive employee profiles and restore when needed.
 
 ### AI in Workflow
 - Meeting note summarization with action extraction.
@@ -91,47 +77,22 @@ A configurable, AI-assisted platform that allows organizations to run fair chanc
 - Immutable audit logs.
 - Role-based redaction for sensitive notes.
 - Signed consent linkage for any shared records.
-- Record merge lineage logs (when duplicate employees are merged).
 
 ---
 
-## D. Partnerships, Assessments, and Feedback
-
-### Functional Requirements
-- External partner registry and MOU/agreement tracking.
-- Partner fidelity scoring over time.
-- Periodic employee feedback collection (service quality/satisfaction).
-- Needs assessments with configurable cadence and question sets.
-- Resource presentations/events with attendance tracking.
-
-### AI in Workflow
-- Feedback sentiment aggregation.
-- Needs-assessment trend summaries.
-- Partner risk flags when fidelity scores decline.
-
----
-
-## E. Program Analytics & KPI Dashboard
+## D. Program Analytics & KPI Dashboard
 
 ### Functional Requirements
 - KPI library + custom metric builder.
-- Separate scorecards for program-level and coordinator-level KPIs.
 - Cohort segmentation (site, role, tenure, risk profile, intervention type).
 - Time-series trends and benchmark comparisons.
 - Exportable executive reports and board-ready summaries.
-- Print/export outputs for plans and progress notes.
 
 ### Standard KPI Categories
 - Intake funnel: referral volume, completion rate, time-to-assignment.
 - Engagement: session cadence, no-show rate, task completion.
 - Outcomes: retention, promotion, wage growth, incident reduction.
 - Service impact: resource utilization, successful referrals, resolution rate.
-- Program scope additions:
-  - employee-reported stability improvement
-  - resource conversion after referral/direct engagement
-  - partner fidelity rate
-  - program awareness rate
-  - documentation completion/submission rate
 
 ### AI in Workflow
 - Narrative analytics (“what changed this quarter?”).
@@ -140,7 +101,7 @@ A configurable, AI-assisted platform that allows organizations to run fair chanc
 
 ---
 
-## F. Customization Layer per Company
+## E. Customization Layer per Company
 
 ### Configuration Surface
 - Tenant-specific forms and fields.
@@ -148,7 +109,6 @@ A configurable, AI-assisted platform that allows organizations to run fair chanc
 - KPI definitions and scorecards.
 - Branding, communication templates, and language packs.
 - Policy-based workflow logic (SLAs, escalations, approvals).
-- Survey/assessment instruments and cadence settings.
 
 ### Isolation Model
 - Strict tenant data partitioning.
@@ -159,15 +119,14 @@ A configurable, AI-assisted platform that allows organizations to run fair chanc
 
 ## 3) End-to-End User Journey
 
-1. Employee/coordinator/manager submits referral (or direct engagement is created).
+1. Employee submits self-referral.
 2. System validates consent and triages urgency.
-3. Coordinator receives AI-generated summary and recommended first steps.
+3. Case worker receives AI-generated summary and recommended first steps.
 4. Initial meeting conducted; AI drafts development plan.
 5. Plan reviewed and approved collaboratively.
-6. Ongoing case interactions logged with structured notes and start dates.
-7. Feedback and periodic needs assessments are collected.
-8. Program manager monitors KPI dashboard and operational load.
-9. Company admin customizes policies/KPIs and exports impact reports.
+6. Ongoing case interactions logged; AI tracks trends and nudges follow-ups.
+7. Program manager monitors KPI dashboard and operational load.
+8. Company admin customizes policies/KPIs and exports impact reports.
 
 ---
 
@@ -175,17 +134,15 @@ A configurable, AI-assisted platform that allows organizations to run fair chanc
 
 ### Frontend Apps
 - Employee Portal
-- Coordinator Console
+- Case Worker Console
 - Program Admin Dashboard
 
 ### Backend Services
 - Identity & Access Service
 - Intake & Case Service
 - Plan Management Service
-- Survey/Assessment Service
-- Partner Management Service
 - Analytics Service
-- Notification Service (email/SMS + campaign support)
+- Notification Service
 - AI Orchestration Service
 
 ### Data & AI
@@ -200,7 +157,7 @@ A configurable, AI-assisted platform that allows organizations to run fair chanc
 
 ### Security Baseline
 - SSO + MFA for staff roles.
-- RBAC with least privilege + caseload-based row access.
+- RBAC with least privilege.
 - Encryption in transit and at rest.
 - Full audit logging for sensitive actions.
 
@@ -216,21 +173,19 @@ A configurable, AI-assisted platform that allows organizations to run fair chanc
 ## 6) MVP Milestones
 
 ### Phase 1 (0–8 weeks)
-- Intake portal + case assignment + structured progress notes.
-- Development plan templates and baseline KPI dashboard.
+- Intake portal + case assignment + basic case notes.
+- Development plan templates and manual KPI dashboard.
 - AI summaries for intake + meeting notes.
-- Caseload filtering and document upload.
 
 ### Phase 2 (8–16 weeks)
 - Full plan generator + recommendation engine.
 - KPI customization layer + cohort analytics.
-- Feedback/needs assessment workflows.
 - Alerting and workflow automations.
 
 ### Phase 3 (16+ weeks)
 - Predictive insights, staffing/capacity forecasts.
-- External partner integrations (community providers, HRIS, booking systems).
-- Partner fidelity scorecards and advanced outcome impact modeling.
+- External partner integrations (community providers, HRIS).
+- Advanced outcome impact modeling.
 
 ---
 
@@ -238,10 +193,10 @@ A configurable, AI-assisted platform that allows organizations to run fair chanc
 
 ### Pricing Model
 - Base platform subscription per tenant.
-- Seat-based pricing for coordinators/admins.
-- Usage-based add-on for AI processing volume and messaging campaigns.
+- Seat-based pricing for case workers/admins.
+- Usage-based add-on for AI processing volume.
 
 ### Offer Tiers
 - Essential: intake + case management + baseline KPIs.
-- Professional: plan automation + feedback/assessment + customizable dashboards.
+- Professional: plan automation + customizable dashboards.
 - Enterprise: advanced analytics, API integrations, dedicated support.
