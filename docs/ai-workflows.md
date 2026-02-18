@@ -1,23 +1,25 @@
 # AI Workflow Design for Fair Chance Workforce Enablement
 
-## 1) AI Workflow: Intake Triage Assistant
+## 1) AI Workflow: Intake & Referral Triage Assistant
 
 ### Trigger
-Employee submits a self-referral intake form.
+Employee/coordinator/manager submits a referral or direct-engagement intake.
 
 ### Inputs
 - Intake form responses
 - Tenant-specific triage rubric
-- Available case worker capacity
+- Available coordinator capacity
+- Candidate duplicate records (for merge recommendations)
 
 ### AI Tasks
 1. Produce plain-language intake summary.
 2. Predict urgency tier with confidence score.
 3. Recommend first-touch actions.
 4. Flag missing critical info.
+5. Suggest probable duplicate records for human review.
 
 ### Human Review
-Case worker confirms or overrides urgency and assignment.
+Coordinator confirms or overrides urgency, assignment, and any merge action.
 
 ---
 
@@ -39,14 +41,14 @@ Initial case meeting completed and intake validated.
 4. Suggest risk mitigations for likely blockers.
 
 ### Human Review
-Case worker edits and approves final plan with employee.
+Coordinator edits and approves final plan with employee.
 
 ---
 
-## 3) AI Workflow: Session Documentation Co-Pilot
+## 3) AI Workflow: Progress Notes Co-Pilot
 
 ### Trigger
-After case interactions (meeting, call, follow-up).
+After case interactions (meeting, call, follow-up, resource presentation).
 
 ### Inputs
 - Raw notes or transcript
