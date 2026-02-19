@@ -140,3 +140,51 @@ def test_validation_errors_return_400():
     finally:
         server.shutdown()
         server.server_close()
+
+
+def test_trailing_slash_routes_do_not_404():
+    init_db()
+    server = ThreadingHTTPServer(("127.0.0.1", PORT + 2), AppHandler)
+    t = threading.Thread(target=server.serve_forever, daemon=True)
+    t.start()
+    time.sleep(0.05)
+
+    base = f"http://127.0.0.1:{PORT + 2}"
+    headers = {"Authorization": "Bearer founder-admin-token", "Content-Type": "application/json"}
+
+    def req(method: str, path: str, payload: dict | None = None):
+        data = json.dumps(payload).encode("utf-8") if payload is not None else None
+        request = urllib.request.Request(base + path, method=method, data=data, headers=headers)
+        with urllib.request.urlopen(request, timeout=5) as resp:
+            return resp.status, json.loads(resp.read().decode("utf-8"))
+
+    try:
+        status, _ = req("POST", "/api/v1/dev/seed/", {})
+        assert status == 200
+
+        status, body = req("POST", "/api/v1/cases/", {
+            "employee_id": "e-1",
+            "assigned_coordinator_id": "u-coord"
+        })
+        assert status == 200
+
+        status, me = req("GET", "/api/v1/me/")
+        assert status == 200
+        assert me["user_id"] == "u-admin"
+
+        status, _ = req("POST", "/api/v1/progress-notes/", {
+            "employee_id": "e-1",
+            "case_id": body["id"],
+            "note_type": "coaching_session",
+            "note_start_date": "2026-02-01",
+            "interaction_at": "2026-02-01T15:00:00Z",
+            "meeting_location": "office",
+            "areas_of_need_codes": ["housing"]
+        })
+        assert status == 200
+
+        status, _ = req("GET", "/api/v1/kpis/")
+        assert status == 200
+    finally:
+        server.shutdown()
+        server.server_close()

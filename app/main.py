@@ -121,6 +121,14 @@ def parse_auth(header: str | None) -> dict[str, str] | None:
     return TOKENS.get(token)
 
 
+def normalize_path(raw_path: str) -> str:
+    """Normalize request paths so `/foo/` and `/foo` resolve the same route."""
+    path = urlparse(raw_path).path
+    if path != "/":
+        path = path.rstrip("/")
+    return path
+
+
 class AppHandler(BaseHTTPRequestHandler):
     server_version = "FairChanceHTTP/0.1"
 
@@ -145,7 +153,7 @@ class AppHandler(BaseHTTPRequestHandler):
         return parse_auth(self.headers.get("Authorization"))
 
     def do_GET(self) -> None:  # noqa: N802
-        path = urlparse(self.path).path
+        path = normalize_path(self.path)
         if path == "/health":
             self._send(200, {"status": "ok"})
             return
@@ -193,7 +201,7 @@ class AppHandler(BaseHTTPRequestHandler):
         self._send(404, {"detail": "Not found"})
 
     def do_POST(self) -> None:  # noqa: N802
-        path = urlparse(self.path).path
+        path = normalize_path(self.path)
         auth = self._auth()
         if auth is None:
             self._send(401, {"detail": "Missing or invalid bearer token"})
