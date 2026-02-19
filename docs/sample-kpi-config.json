@@ -1,0 +1,161 @@
+{
+  "tenant": "acme-logistics",
+  "dashboard": {
+    "timeWindow": "quarter",
+    "refreshCadence": "daily",
+    "scorecards": [
+      "program",
+      "coordinator"
+    ]
+  },
+  "programKpis": [
+    {
+      "key": "stability_improvement_index",
+      "name": "Employee-Reported Stability Improvement",
+      "description": "Average change in employee-reported stability across housing, transportation, and financial areas over time.",
+      "formula": "avg(current_stability_score - baseline_stability_score)",
+      "dataSource": "employee_feedback_surveys + needs_assessments",
+      "target": 10,
+      "format": "number"
+    },
+    {
+      "key": "resource_conversion_rate",
+      "name": "Resource Access Conversion Rate",
+      "description": "Percent of employees who successfully access at least one resource after referral or direct engagement.",
+      "formula": "employees_accessing_resource / eligible_employees",
+      "dataSource": "referrals + cases + progress_notes",
+      "target": 0.65,
+      "format": "percent"
+    },
+    {
+      "key": "support_area_utilization_rate",
+      "name": "Support Area Utilization Rate",
+      "description": "Utilization by support category and overall utilization rate.",
+      "formula": "participants_in_support_area / total_enrolled",
+      "dataSource": "progress_notes.areas_of_need_codes + referrals.support_category_codes",
+      "target": 0.5,
+      "format": "percent",
+      "breakoutBy": "support_category"
+    },
+    {
+      "key": "participants_per_support_area",
+      "name": "Participants per Support Area",
+      "description": "Raw participant count by support category (housing, transportation, financial, etc.).",
+      "formula": "count(distinct employee_id) by support_category",
+      "dataSource": "progress_notes.areas_of_need_codes",
+      "target": null,
+      "format": "number",
+      "breakoutBy": "support_category"
+    },
+    {
+      "key": "partner_fidelity_rate",
+      "name": "Partners Meeting Service Standards",
+      "description": "Percent of active partners meeting agreement terms and service delivery standards.",
+      "formula": "partners_meeting_agreement_terms / total_active_partners",
+      "dataSource": "partner_fidelity_assessments",
+      "target": 0.9,
+      "format": "percent"
+    },
+    {
+      "key": "program_awareness_rate",
+      "name": "Program Awareness Rate",
+      "description": "Percent of surveyed employees who indicate awareness of the program in periodic internal surveys.",
+      "formula": "employees_aware_of_program / surveyed_employees",
+      "dataSource": "employee_feedback_surveys",
+      "target": 0.8,
+      "format": "percent"
+    }
+  ],
+  "coordinatorKpis": [
+    {
+      "key": "referral_response_rate",
+      "name": "Referral Response Rate",
+      "description": "Percent of assigned referrals with first coordinator response within SLA.",
+      "formula": "responded_referrals_within_sla / assigned_referrals",
+      "dataSource": "referrals + progress_notes",
+      "target": 0.95,
+      "format": "percent"
+    },
+    {
+      "key": "employee_engagement_count",
+      "name": "Employee Engagement Count",
+      "description": "Count of coordinator-led employee engagements (meetings/calls/messages) in period.",
+      "formula": "count(progress_notes)",
+      "dataSource": "progress_notes",
+      "target": 40,
+      "format": "number"
+    },
+    {
+      "key": "resource_presentation_count",
+      "name": "Resource Presentation Count",
+      "description": "Count of resource presentations delivered or coordinated by the coordinator.",
+      "formula": "count(resource_presentations)",
+      "dataSource": "resource_presentations",
+      "target": 2,
+      "format": "number"
+    },
+    {
+      "key": "time_allocation_ratio",
+      "name": "Time Allocation to Direct Service",
+      "description": "Share of coordinator effort spent on direct employee support versus administrative activities.",
+      "formula": "direct_service_hours / total_program_hours",
+      "dataSource": "time_tracking or derived activity logs",
+      "target": 0.7,
+      "format": "percent"
+    },
+    {
+      "key": "coordinator_satisfaction_score",
+      "name": "Coordinator Satisfaction / Feedback Score",
+      "description": "Average employee satisfaction score for coordinator interactions.",
+      "formula": "avg(employee_feedback_score_for_coordinator)",
+      "dataSource": "employee_feedback_surveys",
+      "target": 4.2,
+      "format": "number"
+    },
+    {
+      "key": "progress_note_submission_rate",
+      "name": "Documentation Completion & Submission Rate",
+      "description": "Percent of required progress notes submitted and finalized on time.",
+      "formula": "submitted_notes_on_time / required_notes",
+      "dataSource": "progress_notes + case requirements",
+      "target": 0.98,
+      "format": "percent"
+    }
+  ],
+  "cohorts": [
+    "location",
+    "job_family",
+    "tenure_bucket",
+    "program_track",
+    "support_category",
+    "risk_level",
+    "intake_path"
+  ],
+  "alerts": [
+    {
+      "name": "Referral Response Delay",
+      "condition": "referral_response_rate < 0.85",
+      "severity": "high"
+    },
+    {
+      "name": "Low Resource Conversion",
+      "condition": "resource_conversion_rate < 0.5",
+      "severity": "high"
+    },
+    {
+      "name": "Partner Fidelity Drop",
+      "condition": "partner_fidelity_rate < 0.8",
+      "severity": "high"
+    },
+    {
+      "name": "Documentation Compliance Risk",
+      "condition": "progress_note_submission_rate < 0.9",
+      "severity": "medium"
+    },
+    {
+      "name": "Coordinator Satisfaction Risk",
+      "condition": "coordinator_satisfaction_score < 3.5",
+      "severity": "medium"
+    }
+  ]
+}
